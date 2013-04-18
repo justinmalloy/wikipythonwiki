@@ -1,4 +1,6 @@
-The project is built using the Google App Engine SDK and built-in Python libraries.  The App Engine SDK can be obtained from http://code.google.com/appengine/downloads.html. 
+The project is built using the Google App Engine SDK and built-in Python libraries.  The App Engine SDK can be obtained from http://code.google.com/appengine/downloads.html.
+
+View a sample site running this application at http://wikipythonwiki.appspot.com
 
 To install a development version of the system in Windows:
 1.	Download Google App Engine SDK
