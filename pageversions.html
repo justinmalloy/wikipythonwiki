@@ -1,0 +1,28 @@
+{%extends "base.html"%}
+{%block body%}
+
+<table id="mytable" cellspacing="0">
+<caption>Click Version Number to View Prior Version</caption> 
+	<tr>
+		<th scope="col" class="nobg">Version Number</th>
+		<th scope="col">Author</th>
+		<th scope="col">Date (UTC)</th>
+	</tr>
+{% for version in versions %}
+	{%if forloop.counter|divisibleby:2 %}
+	<tr>
+		<th scope="row" class="spec"><a href="/viewpage?versionid={{ version.key }}">{{ forloop.revcounter }}</a></td>
+		<td>{{ version.author }}</td>
+		<td>{{ version.date }}</td>
+	</tr>
+	{% else %}
+	<tr>
+		<th scope="row" class="specalt"><a href="/viewpage?versionid={{ version.key }}">{{ forloop.revcounter }}</a>{% if forloop.first %} (Current Version){% endif %}</td>
+		<td class="alt">{{ version.author }}</td>
+		<td class="alt">{{ version.date }}</td>
+	</tr>	
+	{% endif %}
+
+{% endfor %}
+	</table>
+{%endblock%}

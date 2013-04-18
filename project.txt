@@ -1,0 +1,14 @@
+Python Project:
+Wiki system in Python using Google App Engine
+View http://wikipythonwiki.appspot.com for a demo version with some content
+
+The system is a lightweight wiki engine written using Google App Engine and Python.  The system is a fully functional wiki, which has the ability to create wiki pages, edit them, and manage them.  Management capabilities include the ability to delete pages, and toggle security flags.  Security for the application is integrated into Google accounts by default.  If a group deploying the system wants to use its own custom security it can be integrated to a custom security domain through Google Apps.  In addition, because the system is integrated with the Google App Engine there is a backend management console that allows an administrator to control additional aspects of the system.
+To create new pages users must be logged in and then simply click create page.  From there the user enters the title of the page they want to create and then are redirected to an editing page with a full featured, browser-integrated HTML editor.  All content in the system is stored as HTML.
+
+Everything in the system is security context sensitive.  Every page within the system has the same layout and a login/sign out link will appear in the upper right hand corner.  While logged in or as an admin additional links will appear for management capabilities.  While viewing a page, if a user is allowed to edit a page an “Edit This Page” link will appear in the upper right hand corner.  While managing pages, if the user is an administrator additional capabilities will appear, including the ability to delete pages, and toggle security flags.
+Versioning is built into the system for all pages including the ability to roll back to a prior version.  To view a prior version users can see the prior versions while on the editing page, or through the manages pages administration page.
+
+Lessons Learned:
+The hardest part of this project was integrating the Google App Engine and data store.  The data store is very different from most relational engines and has somewhat of a steep learning curve if you are used to a relational paradigm.  However, it is designed from the ground up for building web applications so after getting up to speed it is extremely easy to store, retrieve, edit, and delete data.
+From a project management perspective, the issue of scope was hard to deal with.  There is always another feature that can be added, and due to the ease of using the framework this resulted in several iterations.  It would have been helpful for me to write a short scoping document from the start to avoid the scope creep.
+

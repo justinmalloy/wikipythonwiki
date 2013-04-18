@@ -1,0 +1,42 @@
+{%extends "base.html"%}
+{%block body%}
+
+<table id="mytable" cellspacing="0">
+<caption>Manage Wiki Pages </caption> 
+	<tr>
+		<th scope="col" class="nobg">Page Name</th>
+		<th scope="col">Edit</th>
+		<th scope="col">Prior Versions</th>
+		{%if is_admin%}
+		<th scope="col">Delete</th>
+		<th scope="col">Secure</th>
+		<th scope="col">Display Left</th>
+		{%endif%}
+	</tr>
+{% for page in pages %}
+	{%if forloop.counter|divisibleby:2 %}
+	<tr>
+		<th scope="row" class="spec"><a href="/wiki/{{ page.title|urlencode }}">{{ page.title }}</a></td>
+		<td><a href="/editpage?pageid={{ page.key }}"> Edit Page</a></td>
+		<td><a href="/pageversions?pageid={{ page.key }}">Versions</a></td>
+        {%if is_admin%}
+        <td><a href="/pageaction?action=delete&pageid={{ page.key }}">Delete Page</td>
+		<td><a href="/pageaction?action=secure&pageid={{ page.key }}">{{ page.secure }}</a></td>
+		<td><a href="/pageaction?action=display&pageid={{ page.key }}">{{ page.display }}</a></td>
+		{%endif%}
+	</tr>
+	{% else %}
+	<tr>
+		<th scope="row" class="specalt" ><a href="/wiki/{{ page.title|urlencode }}">{{ page.title }}</a></td>
+		<td class="alt"><a href="/editpage?pageid={{ page.key }}"> Edit Page</a></td>
+		<td><a href="/pageversions?pageid={{ page.key }}">Versions</a></td>
+        {%if is_admin%}
+        <td class="alt"><a href="/pageaction?action=delete&pageid={{ page.key }}">Delete Page</td>
+		<td class="alt"><a href="/pageaction?action=secure&pageid={{ page.key }}">{{ page.secure }}</a></td>
+		<td class="alt"><a href="/pageaction?action=display&pageid={{ page.key }}">{{ page.display }}</a></td>
+		{%endif%}
+	</tr>
+	{% endif %}
+{% endfor %}
+	</table>
+{%endblock%}

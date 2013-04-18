@@ -1,0 +1,10 @@
+{%extends "base.html"%}
+{%block body%}
+
+    <form action="/createpage" method="post">
+	
+      <div>Page Title:<br><input type="text" name="title" value="{{pagename}}"></input></div>
+      <div><input type="submit" value="Create Page"></div>
+    </form>
+    
+{%endblock%}

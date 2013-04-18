@@ -1,0 +1,22 @@
+{%extends "base.html"%}
+{%block body%}
+
+<div style="font-weight:bold;font-size:12px;margin:6px 10px;text-align:right;">
+<a href="/wiki/{{ pagecontent.page.title }}">View Live Page</a> |
+<a href="/pageversions?pageid={{ pagecontent.page.key }}">Versions</a>
+</div>
+<br></br>
+    
+    <form action="/editpage" method="post">
+    <script type="text/javascript" src="/ckeditor/ckeditor.js"></script>
+      <div><textarea name="content">{{ pagecontent.content }}</textarea>
+      <script type="text/javascript">
+				CKEDITOR.replace( 'content', {height: 600 } );
+			</script>
+      </div>
+      <div><input type="submit" value="Save Page"></div>
+      <input type="hidden" name="pageid" value="{{pagecontent.page.key }}" />
+ 
+    </form>
+ 
+{%endblock%}

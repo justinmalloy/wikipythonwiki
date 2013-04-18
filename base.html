@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<link rel="stylesheet" type="text/css" href="/static/layout.css" />
+<link rel="stylesheet" type="text/css" href="/static/presentation.css" />
+</head>
+<body>
+<!-- Header -->
+<div id="hdr">
+<div style="font-weight:bold;font-size:12px;margin:6px 10px;text-align:right;">
+{%if user %}
+<a href="/managepages">Manage Pages</a>| <a href="/createpage">Create Page</a> |
+<b>{{user.nickname}} &lt;{{user.email}}&gt;</b>
+{%if is_admin%}
+	{%if is_production%}
+	<a href="https://appengine.google.com/dashboard?app_id={{appid}}" target="_blank">Admin</a>
+	{% else %}
+	| <a href="/_ah/admin" target="_blank">Admin</a>
+	{%endif%}
+{%endif%}
+{%if sign_out%} | <a href="{{sign_out}}">Sign out</a>{%endif%}
+{% else %}
+{%if sign_in%}<a href="{{sign_in}}">Sign in</a>{%endif%}
+{%endif%}
+</div>
+</div>
+<div id="lh-hdr">
+</div>
+<!-- left column -->
+<div id="lh-col">
+<div style="font-weight:bold;font-size:12px;margin:6px 10px;text-align:center;">
+<a href="/wiki/Main_Page">Home</a>
+<br>
+<br>
+Top Pages
+<br>
+<br>
+{% for page in left_nav %}
+<a href="/wiki/{{ page.title|urlencode }}">{{ page.title }}</a>
+<br>
+{% endfor %}
+</div>
+</div>
+<!-- end of left column -->
+<!-- right column -->
+<div id="rh-col">
+{%block body%}{%endblock%}
+{% ifequal BUILD 'development' %}
+Development
+{% endifequal %}
+</div>
+<!-- end of right column -->
+</body>
+</html>

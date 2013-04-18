@@ -1,0 +1,58 @@
+
+/* Layout Stylesheet */ 
+
+body{
+ margin: 0;
+ padding:0;
+ font: normal 11px auto "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+ color: #4f6b72;
+ }
+	 
+#hdr{
+ height:35px;
+ background:#EFEFEF;
+ color:#000000;
+ border:solid #000000;
+ border-width:2px 0px;
+ margin:10px 0 0 0;
+ }
+
+#lh-hdr{
+ position: absolute;
+ top: 70px;
+ left: 22px;
+ width: 180px;
+ margin: 0px;
+ padding: 0px;
+ height: 176px;
+ background: #ffffff url(/static/logo.jpg) no-repeat;
+ }
+
+#lh-col{
+ position: absolute;
+ top: 260px;
+ left: 20px;
+ width: 180px;
+ border: 2px solid #000000;
+ background: #EFEFEF;
+ color: #333333;
+ margin: 0px;
+ padding: 0px;
+ height: 400px;
+ }
+
+#rh-col{
+ margin: 20px 20px 20px 220px;
+ border: 2px solid #000000;
+ background: #ffffff;
+ color: #333333;
+ padding: 20px;
+ position :relative;
+ }
+ 
+ 
+ caption {
+	padding: 0 0 5px 0;
+	width: 700px;	 
+	font: italic 11px "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	text-align: right;

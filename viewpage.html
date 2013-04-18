@@ -1,0 +1,14 @@
+{%extends "base.html"%}
+{%block body%}
+<div style="font-weight:bold;font-size:12px;margin:6px 10px;text-align:right;">
+{%if pagecontent.page.secure and not user %}
+This Page is secure and requires you to sign in to edit it 
+{%else%}
+<a href="/editpage?versionid={{pagecontent.key}}">Edit This Page</a>
+{%endif%}
+</div>
+<br></br>
+<h1>{{ pagecontent.page.title }}</h1>
+<br>
+      {{ pagecontent.content }}
+{%endblock%}
