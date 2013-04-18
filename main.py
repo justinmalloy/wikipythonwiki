@@ -53,13 +53,15 @@ class Page(db.Model):
     title = db.StringProperty()
     display = db.BooleanProperty()
     secure = db.BooleanProperty()
+    
+def wiki_key():
+    return db.Key.from_path('Wiki','default_wiki')
 
 #Data model for our PageContent entities
 class PageContent(db.Model):
     author= db.UserProperty()
     content = db.TextProperty()
     date = db.DateTimeProperty(auto_now_add=True)
-    page = db.ReferenceProperty(Page, collection_name="versions")
     
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -90,15 +92,14 @@ class CreatePage(webapp.RequestHandler):
                 errorpage(self,"You do not have permission to perform this action!")
                 return
             
-            page  = Page(key_name = self.request.get('title'))            
+            page  = Page(parent=wiki_key(), key_name = self.request.get('title'))            
             page.author = users.get_current_user()
             page.title = self.request.get('title')
             page.secure = False
             page.display = True
             page_id = page.put()
             
-            pagecontent = PageContent()
-            pagecontent.page = page_id
+            pagecontent = PageContent(parent=page)
             pagecontent.content = page.title
             pagecontent.author = users.get_current_user()    
             pagecontent.put()
@@ -110,18 +111,16 @@ class CreatePage(webapp.RequestHandler):
 class EditPage(webapp.RequestHandler):
     def get(self):
         try:
-            #Check if a version ID is supplied, and if so retrieve the content view the version
+            #Check if a version ID is supplied, and if so retrieve the content and view the version
             if self.request.get("versionid"):
                 pagecontent = db.get(self.request.get("versionid"))
-                page_id = pagecontent.page.key
-                page = pagecontent.page
-            #No version was supplied so retrieve the content view the pageid
+                page = pagecontent.parent()
+
+            #No version was supplied so retrieve the lastest content for the pageid
             else:
                 page_id = db.Key(self.request.get('pageid'))
-                page = db.get(page_id)
-
-                #Get the latest version to edit
-                pagecontent = page.versions.order("-date")[0]
+                pagecontent = PageContent.all().ancestor(page_id).order("-date").get()   
+                page = pagecontent.parent()
             
             #Check if the page is secure and if the user is not logged in
             if page.secure == True and not users.GetCurrentUser():
@@ -141,8 +140,9 @@ class EditPage(webapp.RequestHandler):
     def post(self):
         try:
             page_id = db.Key(self.request.get('pageid'))
-            pagecontent = PageContent()        
             page = db.get(page_id)
+            pagecontent = PageContent(parent=page)        
+            
 
             #Check if the page is secure and the user is not logged in
             if page.secure == True and not users.GetCurrentUser():
@@ -156,7 +156,6 @@ class EditPage(webapp.RequestHandler):
                 pagecontent.author = users.get_current_user()     
         
             #Create a new page version
-            pagecontent.page = page_id
             pagecontent.content = self.request.get('content') 
             pagecontent.put()
         
@@ -171,8 +170,7 @@ class ViewPage(webapp.RequestHandler):
             #Retrieve by pageid
             if self.request.get('pageid'):
                 page_id = db.Key(self.request.get('pageid'))
-                page = db.get(page_id)
-                pagecontent = page.versions.order("-date")[0]
+                pagecontent = PageContent.all().ancestor(page_id).order("-date").get()
             
             #Retrieve by versionid
             if self.request.get('versionid'):
@@ -195,16 +193,17 @@ class ViewWikiPage(webapp.RequestHandler):
             page_name = self.request.path.replace("/wiki/","")
             page_name = urllib.unquote(page_name)
             page_name = page_name.replace("_", " ")
-            page = Page.get_by_key_name(page_name)
-        
+            page = Page.get_by_key_name(page_name, parent=wiki_key())
+
             #This code is executed the first time when the app is installed
             #The user is redirected to create the Main Page from any empty datastore
+
             if (not page) and page_name == "Main Page":
                 self.redirect("/createpage?pagename=Main_Page")
                 return
             
             #Get the latest version of the page
-            pagecontent = page.versions.order("-date")[0]
+            pagecontent = PageContent.all().ancestor(page).order("-date").get()
             
             #Generate the template values and merge the template with the values 
             template_values = {'pagecontent': pagecontent}
@@ -219,8 +218,7 @@ class MangePages(webapp.RequestHandler):
     @login_required
     def get(self):
         try:
-            pages_query = Page.all().order('title')
-            pages = pages_query.fetch(25)
+            pages = Page.all().ancestor(wiki_key()).order('title').fetch(25)
         
             #Generate the template values and merge the template with the values 
             template_values = {'pages': pages}
@@ -247,7 +245,7 @@ class PageAction(webapp.RequestHandler):
         
             #If the action is delete then delete the page
             if self.request.get('action') == "delete":
-                page.delete()
+                self.delete(page)
             
             #If the action is secure then toggle the secure flag
             elif self.request.get('action') == "secure":
@@ -267,6 +265,22 @@ class PageAction(webapp.RequestHandler):
             self.redirect('/managepages')
         except Exception, exc:
             errorpage(self,exc=exc)
+
+    @db.transactional
+    def delete(self,page):
+        try:
+            #retrieve all of the page versions associated with this page
+            pagecontent_query = PageContent.all().ancestor(page)
+
+            #delete all the page versions
+            for pagecontent in pagecontent_query.run():
+                pagecontent.delete()
+
+            #delete the page
+            page.delete()
+
+        except Exception, exc:
+            errorpage(self,exc=exc)
             
 class PageVersions(webapp.RequestHandler):
     def get(self):
@@ -274,8 +288,11 @@ class PageVersions(webapp.RequestHandler):
             #Retrieve the page and versions of the page
             page_id = db.Key(self.request.get('pageid'))
             page = db.get(page_id)
-            versions = page.versions.order("-date")
-            num_versions = page.versions.count()
+
+            versions_query = PageContent.all().ancestor(page)
+            versions = versions_query.order("-date").run()
+            
+            num_versions = versions_query.count()
         
             #Generate the template values and merge the template with the values 
             template_values = {'page': page, 'versions':versions, 'num_versions':num_versions}

@@ -2,8 +2,8 @@
 {%block body%}
 
 <div style="font-weight:bold;font-size:12px;margin:6px 10px;text-align:right;">
-<a href="/wiki/{{ pagecontent.page.title }}">View Live Page</a> |
-<a href="/pageversions?pageid={{ pagecontent.page.key }}">Versions</a>
+<a href="/wiki/{{ pagecontent.parent.title }}">View Live Page</a> |
+<a href="/pageversions?pageid={{ pagecontent.parent.key }}">Versions</a>
 </div>
 <br></br>
     
@@ -15,7 +15,7 @@
 			</script>
       </div>
       <div><input type="submit" value="Save Page"></div>
-      <input type="hidden" name="pageid" value="{{pagecontent.page.key }}" />
+      <input type="hidden" name="pageid" value="{{pagecontent.parent.key }}" />
  
     </form>
  

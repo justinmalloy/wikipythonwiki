@@ -17,9 +17,9 @@
 <b>{{user.nickname}} &lt;{{user.email}}&gt;</b>
 {%if is_admin%}
 	{%if is_production%}
-	<a href="https://appengine.google.com/dashboard?app_id={{appid}}" target="_blank">Admin</a>
+	|<a href="https://appengine.google.com/dashboard?app_id={{appid}}" target="_blank">Admin</a>
 	{% else %}
-	| <a href="/_ah/admin" target="_blank">Admin</a>
+	<!-- no longer works in new app engine sdk <a href="/_ah/admin" target="_blank">Admin</a> -->
 	{%endif%}
 {%endif%}
 {%if sign_out%} | <a href="{{sign_out}}">Sign out</a>{%endif%}
